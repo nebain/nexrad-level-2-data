@@ -1,13 +1,13 @@
-const {
+import {
 	FILE_HEADER_SIZE, RADAR_DATA_SIZE, CTM_HEADER_SIZE,
-} = require('../constants');
+} from '../constants.js';
 
 // message parsers
-const parseMessage1 = require('./Level2Record-1');
-const parseMessage2 = require('./Level2Record-2');
-const parseMessage31 = require('./Level2Record-31');
-const parseMessage5 = require('./Level2Record-5-7');
-const { level2RecordSearch } = require('./Level2RecordSearch');
+import parseMessage1 from './Level2Record-1.js';
+import parseMessage2 from './Level2Record-2.js';
+import parseMessage31 from './Level2Record-31.js';
+import parseMessage5 from './Level2Record-5-7.js';
+import { level2RecordSearch } from './Level2RecordSearch.js';
 
 /**
  * Read a single record from the radar data
@@ -70,4 +70,4 @@ const getRecord = (raf, recordOffset, options) => {
 	}
 };
 
-module.exports.Level2Record = Level2Record;
+export { Level2Record };

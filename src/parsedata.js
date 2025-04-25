@@ -1,8 +1,8 @@
-const { RandomAccessFile, BIG_ENDIAN } = require('./classes/RandomAccessFile');
-const { Level2Record } = require('./classes/Level2Record');
-const { RADAR_DATA_SIZE } = require('./constants');
-const decompress = require('./decompress');
-const parseHeader = require('./parseheader');
+import { RandomAccessFile, BIG_ENDIAN } from './classes/RandomAccessFile.js';
+import { Level2Record } from './classes/Level2Record.js';
+import { RADAR_DATA_SIZE }  from './constants.js';
+import decompress from './decompress.js';
+import parseHeader from './parseheader.js';
 
 /**
  * @typedef {object} ParsedData Intermediate parsed radar data, further processed by Level2Radar
@@ -113,4 +113,4 @@ const groupAndSortScans = (scans) => {
 	return groups;
 };
 
-module.exports = parseData;
+export default parseData;

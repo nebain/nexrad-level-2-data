@@ -1,5 +1,5 @@
-const parseData = require('./parsedata');
-const combineData = require('./combinedata');
+import parseData from './parsedata.js';
+import combineData from './combinedata.js';
 
 /**
  * @typedef {object} ParserOptions parser options
@@ -317,4 +317,4 @@ const nullLogger = {
 	warn: () => {},
 };
 
-module.exports.Level2Radar = Level2Radar;
+export { Level2Radar };

@@ -38,4 +38,4 @@ const combine = (...args) => {
 	return output;
 };
 
-module.exports = combine;
+export default combine;

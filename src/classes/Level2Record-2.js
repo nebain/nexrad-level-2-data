@@ -1,5 +1,5 @@
 // parse message type 2
-module.exports = (raf, message) => {
+export default (raf, message) => {
 	message.record = {
 		rdaStatus: raf.readShort(),
 		operabilityStatus: raf.readShort(),

@@ -47,6 +47,6 @@ const search = (raf, date, options) => {
 	return false;
 };
 
-module.exports = {
+export {
 	level2RecordSearch,
 };

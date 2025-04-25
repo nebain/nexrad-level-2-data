@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-const fs = require('fs');
-const { Level2Radar } = require('./src/index');
+import fs from 'fs';
+import { Level2Radar } from './src/index.js';
 
 // these files should contain the same error
 const fileToLoadError = './data/messagesizeerror';

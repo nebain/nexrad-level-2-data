@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
-const fs = require('fs/promises');
-const { Level2Radar } = require('./src/index');
+import fs from 'fs/promises';
+import { Level2Radar } from './src/index.js';
 
 // const fileToLoad = './data/non-hi-res/KLOT19950413_132143.gz'; // The radar archive file to load
 const fileToLoad = './data/KLOT20220317_000842_V06'; // The radar archive file to load

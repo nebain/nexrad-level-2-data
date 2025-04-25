@@ -1,5 +1,5 @@
 // parse message type 5 and 7
-module.exports = (raf, message) => {
+export default (raf, message) => {
 	message.record = {
 		message_size: raf.readShort(),
 		pattern_type: raf.readShort(),

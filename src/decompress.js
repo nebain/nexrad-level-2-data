@@ -1,16 +1,16 @@
 // decompress a nexrad level 2 archive, or return the provided file if it is not compressed
 
 // bzip
-const bzip = require('seek-bzip');
+import bzip from 'seek-bzip';
 
 // gzip
-const gzipDecompress = require('./gzipdecompress');
+import gzipDecompress from './gzipdecompress.js';
 
 // structured byte access
-const { RandomAccessFile, BIG_ENDIAN } = require('./classes/RandomAccessFile');
+import { RandomAccessFile, BIG_ENDIAN } from './classes/RandomAccessFile.js';
 
 // constants
-const { FILE_HEADER_SIZE } = require('./constants');
+import { FILE_HEADER_SIZE } from './constants.js';
 
 const decompress = (raf) => {
 	// detect gzip header
@@ -82,4 +82,4 @@ const readCompressionHeader = (raf) => ({
 	block_size: raf.readString(1),
 });
 
-module.exports = decompress;
+export default decompress;

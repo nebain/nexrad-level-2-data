@@ -1,5 +1,5 @@
 // parse message type 1
-module.exports = (raf, message, options) => {
+export default (raf, message, options) => {
 	// record starting offset
 	const startingOffset = raf.getPos();
 

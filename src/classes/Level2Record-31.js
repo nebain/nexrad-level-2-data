@@ -1,7 +1,7 @@
-const { MESSAGE_HEADER_SIZE } = require('../constants');
+import { MESSAGE_HEADER_SIZE } from '../constants.js';
 
 // parse message type 31
-module.exports = (raf, message, offset, options) => {
+export default (raf, message, offset, options) => {
 	const record = {
 		id: raf.readString(4),
 		mseconds: raf.readInt(),

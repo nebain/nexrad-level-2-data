@@ -174,6 +174,8 @@ class RandomAccessFile {
 	}
 }
 
-module.exports.RandomAccessFile = RandomAccessFile;
-module.exports.BIG_ENDIAN = BIG_ENDIAN;
-module.exports.LITTLE_ENDIAN = LITTLE_ENDIAN;
+export {
+	RandomAccessFile,
+	BIG_ENDIAN,
+	LITTLE_ENDIAN
+};

@@ -1,8 +1,8 @@
-const zlib = require('zlib');
+import zlib from 'zlib';
 // structured byte access
-const { RandomAccessFile, BIG_ENDIAN } = require('./classes/RandomAccessFile');
+import { RandomAccessFile, BIG_ENDIAN } from './classes/RandomAccessFile.js';
 
-module.exports = (raf) => {
+export default (raf) => {
 	const data = zlib.gunzipSync(raf.buffer);
 	return new RandomAccessFile(data, BIG_ENDIAN);
 };
