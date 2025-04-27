@@ -1,72 +1,71 @@
 import parseData from './parsedata.js';
 import combineData from './combinedata.js';
 
+	/**
+	 * Parses a Nexrad Level 2 Data archive or chunk. Provide `file` as a `Uint8Array`. Returns an object formatted per the [ICD FOR RDA/RPG - Build RDA 20.0/RPG 20.0 (PDF)](https://www.roc.noaa.gov/wsr88d/PublicDocs/ICDs/2620002U.pdf), or as close as can reasonably be represented in a javascript object. Additional data accessors are provided in the returned object to pull out typical data in a format ready for processing.
+	 * Radar data is accessed through the get* methods
+	 *
+	 * @param {Uint8Array|Object} file `Uint8Array` with Nexrad Level 2 data. Alternatively a Level2RadarClass object, typically used internally when combining data.
+	 * @param {ParserOptions} [options] Parser options
+	 */
+
+async function Level2Radar(file, options = null) {
+	if (file instanceof Uint8Array) {
+		// default mode, parse file from buffer / Uint8Array
+
+		const combinedOptions = combineOptions(options);
+		const parsed = await parseData(file, combinedOptions);
+		const l2 = new Level2RadarClass({
+			...parsed,
+			options: combinedOptions,
+		});
+		return l2;
+	} else if (file.vcp && file.options && file.elevation) {
+		return new Level2RadarClass(file);
+	} else {
+		throw new Error('Unknown data provided');
+	}
+
+}
+
 /**
  * @typedef {object} ParserOptions parser options
  * @property {(object | boolean)} [logger=console] By default error and information messages will be written to the console. These can be suppressed by passing false, or a custom logger can be provided. A custom logger must provide the log() and error() functions.
  */
 
-class Level2Radar {
-	/**
-	 * Parses a Nexrad Level 2 Data archive or chunk. Provide `rawData` as a `Buffer`. Returns an object formatted per the [ICD FOR RDA/RPG - Build RDA 20.0/RPG 20.0 (PDF)](https://www.roc.noaa.gov/wsr88d/PublicDocs/ICDs/2620002U.pdf), or as close as can reasonably be represented in a javascript object. Additional data accessors are provided in the returned object to pull out typical data in a format ready for processing.
-	 * Radar data is accessed through the get* methods
-	 *
-	 * @param {Buffer|Level2Radar} file Buffer with Nexrad Level 2 data. Alternatively a Level2Radar object, typically used internally when combining data.
-	 * @param {ParserOptions} [options] Parser options
-	 */
+class Level2RadarClass {
+	constructor(file) {
+		this.data = file.data;
+		this.elevation = file.elevation ?? 1; // 1 based per NOAA documentation
+		
+		/**
+		 * @type {Header}
+		 * @category Metadata
+		 */
+		this.header = file.header;
+		this.options = file.options;
 
-	constructor(file, options) {
-		// combine options with defaults
-		this.elevation = 1;	// 1 based per NOAA documentation
-		// default mode, parse file from buffer
-		if (file instanceof Buffer) {
-		// options and defaults
-			this.options = combineOptions(options);
-			const {
-				data, header, vcp, hasGaps, isTruncated,
-			} = parseData(file, this.options);
-			this.data = data;
+		/**
+		 * @type {Vcp}
+		 * @category Metadata
+		 */
+		this.vcp = file.vcp;
+		
+		/**
+		 * Gaps were found in the source data
+		 *
+		 * @type {boolean}
+		 * @category Metadata
+		 */
+		this.hasGaps = file.hasGaps;
 
-			/**
-			 * @type {Header}
-			 * @category Metadata
-			 */
-			this.header = header;
-
-			/**
-			 * @type {Vcp}
-			 * @category Metadata
-			 */
-			this.vcp = vcp;
-
-			/**
-			 * Gaps were found in the source data
-			 *
-			 * @type {boolean}
-			 * @category Metadata
-			 */
-
-			this.hasGaps = hasGaps;
-
-			/**
-			 * Source data was truncated
-			 *
-			 * @type {boolean}
-			 * @category Metadata
-			 */
-			this.isTruncated = isTruncated;
-		} else if (typeof file === 'object' && (file.data && file.header && file.vcp)) {
-		// alternative mode data is fed in as a pre-formatted object as the result of the combine static function
-			this.data = file.data;
-			this.elevation = file.elevation;
-			this.header = file.header;
-			this.options = file.options;
-			this.vcp = file.vcp;
-			this.hasGaps = file.hasGaps;
-			this.isTruncated = file.isTruncated;
-		} else {
-			throw new Error('Unknown data provided');
-		}
+		/**
+		 * Source data was truncated
+		 *
+		 * @type {boolean}
+		 * @category Metadata
+		 */
+		this.isTruncated = file.isTruncated;
 	}
 
 	/**

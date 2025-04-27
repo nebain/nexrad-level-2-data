@@ -29,6 +29,7 @@
   "author": "Matt Walsh",
   "license": "MIT",
   "dependencies": {
+    "bzip2-wasm": "^1.0.1",
     "seek-bzip": "^2.0.0"
   },
   "devDependencies": {

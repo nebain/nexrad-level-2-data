@@ -6,7 +6,7 @@ class RandomAccessFile {
 	 * Store a buffer or string and add functionality for random access
 	 * Unless otherwise noted all read functions advance the file's pointer by the length of the data read
 	 *
-	 * @param {Buffer|string} file A file as a string or Buffer to load for random access
+	 * @param {Uint8Array|string} file A file as a string or Uint8Array to load for random access
 	 * @param {number} endian Endianess of the file constants BIG_ENDIAN and LITTLE_ENDIAN are provided
 	 */
 	constructor(file, endian = BIG_ENDIAN) {
@@ -19,22 +19,33 @@ class RandomAccessFile {
 
 		// string to buffer if string was provided
 		if (typeof file === 'string') {
-			this.buffer = Buffer.from(file, 'binary');
+			const encoder = new TextEncoder();
+			this.buffer = encoder.encode(file);
 		} else {
 			// load the buffer directly
 			this.buffer = file;
 		}
 
 		// set up local read functions so we don't constantly query endianess
-		if (this.bigEndian) {
-			this.readFloatLocal = this.buffer.readFloatBE.bind(this.buffer);
-			this.readIntLocal = this.buffer.readUIntBE.bind(this.buffer);
-			this.readSignedIntLocal = this.buffer.readIntBE.bind(this.buffer);
-		}	else {
-			this.readFloatLocal = this.buffer.readFloatLE.bind(this.buffer);
-			this.readIntLocal = this.buffer.readUIntLE.bind(this.buffer);
-			this.readSignedIntLocal = this.buffer.readIntLE.bind(this.buffer);
-		}
+		this.readFloatLocal = offset => (new DataView(file.buffer, file.byteOffset + offset, 4)).getFloat32(0, false);
+		this.readIntLocal = (offset, byteLength) => {
+			const view = new DataView(file.buffer, file.byteOffset + offset, byteLength);
+			if (byteLength == 1) { return view.getUint8(0); }
+			if (byteLength == 2) { return view.getUint16(0, !this.bigEndian); }
+			if (byteLength == 4) { return view.getUint32(0, !this.bigEndian); }
+			throw new Error("Unsupported byteLength", byteLength);
+		};
+		this.readSignedIntLocal = (offset, byteLength) => {
+			const view = new DataView(file.buffer, file.byteOffset + offset, byteLength);
+			if (byteLength == 1) { return view.getInt8(0); }
+			if (byteLength == 2) { return view.getInt16(0, !this.bigEndian); }
+			if (byteLength == 4) { return view.getInt32(0, !this.bigEndian); }
+			throw new Error("Unsupported byteLength", byteLength);
+		};
+		const decoder = new TextDecoder();
+		this.readStringLocal = (offset, byteLength) => {
+			return decoder.decode(this.buffer.slice(offset, offset + byteLength));
+		};
 	}
 
 	/**
@@ -75,8 +86,8 @@ class RandomAccessFile {
 	 * @returns {string}
 	 */
 	readString(length) {
-		const data = this.buffer.toString('utf-8', this.offset, (this.offset += length));
-
+		const data = this.readStringLocal(this.offset, length);
+		this.offset += length;
 		return data;
 	}
 

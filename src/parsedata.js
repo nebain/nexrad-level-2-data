@@ -14,20 +14,20 @@ import parseHeader from './parseheader.js';
  */
 
 /**
- * Internal function. Parses a Nexrad Level 2 Data archive or chunk. Provide `rawData` as a `Buffer`.
+ * Internal function. Parses a Nexrad Level 2 Data archive or chunk. Provide `rawData` as a `Uint8Array`.
  *
  * @class parseData
- * @param {Buffer} file Buffer with Nexrad Level 2 data. Alternatively a Level2Radar object, typically used internally when combining data.
+ * @param {Uint8Array} file Uint8Array with Nexrad Level 2 data. Alternatively a Level2Radar object, typically used internally when combining data.
  * @param {object} [options] Parser options
  * @param {(object | boolean)} [options.logger=console] By default error and information messages will be written to the console. These can be suppressed by passing false, or a custom logger can be provided. A custom logger must provide the log(), warn() and error() function.
  * @returns {object} Intermediate data for use with Level2Radar
  */
-const parseData = (file, options) => {
+const parseData = async (file, options) => {
 	const rafCompressed = new RandomAccessFile(file, BIG_ENDIAN);
 	const data = [];
 
 	// decompress file if necessary, returns original file if no compression exists
-	const raf = decompress(rafCompressed);
+	const raf = await decompress(rafCompressed);
 
 	// read the file header
 	const header = parseHeader(raf);

@@ -2,6 +2,7 @@
 
 // bzip
 import bzip from 'seek-bzip';
+// import BZip2 from "bzip2-wasm";
 
 // gzip
 import gzipDecompress from './gzipdecompress.js';
@@ -12,7 +13,7 @@ import { RandomAccessFile, BIG_ENDIAN } from './classes/RandomAccessFile.js';
 // constants
 import { FILE_HEADER_SIZE } from './constants.js';
 
-const decompress = (raf) => {
+const decompress = async (raf) => {
 	// detect gzip header
 	const gZipHeader = raf.read(2);
 	raf.seek(0);
@@ -58,21 +59,43 @@ const decompress = (raf) => {
 	}
 
 	// reuse the original header if present
-	const outBuffers = [raf.buffer.slice(0, headerSize)];
+	const outArrays = [raf.buffer.slice(0, headerSize)];
 
 	// loop through each block and decompress it
+	// const bzip2 = new BZip2();
+	// await bzip2.init();
+
+	let totalLength = headerSize;
+	// for (let i = 0; i < positions.length; i++) {
+	// 	const block = positions[i];
+	// 	// console.log(block);
+	// 	if (block.size > 4294938600) {
+	// 		continue;
+	// 	}
+	// 	const compressed = raf.buffer.slice(block.pos, block.pos + block.size);
+	// 	const decompressed = bzip2.decompress(compressed, block.size * 1000);
+	// 	totalLength += decompressed.length;
+	// 	outArrays.push(decompressed);
+	// }
+
 	positions.forEach((block) => {
 		// extract the block from the buffer
 		const compressed = raf.buffer.slice(block.pos, block.pos + block.size);
 		const output = bzip.decodeBlock(compressed, 32); // skip 32 bits 'BZh9' header
-		outBuffers.push(output);
+		totalLength += output.length;
+		outArrays.push(output);
 	});
 
 	// combine the buffers
-	const outBuffer = Buffer.concat(outBuffers);
+	const outArray = new Uint8Array(totalLength);
+	let offset = 0;
+	outArrays.forEach(arr => {
+		outArray.set(arr, offset);
+		offset += arr.length;
+	});
 
 	// pass the buffer to RandomAccessFile and return the result
-	return new RandomAccessFile(outBuffer, BIG_ENDIAN);
+	return new RandomAccessFile(outArray, BIG_ENDIAN);
 };
 
 // compression header is (int) size of block + 'BZh' + one character block size
