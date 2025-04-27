@@ -4,7 +4,7 @@ import path from 'path';
 export default defineConfig({
   resolve: {
     alias: {
-      'nexrad-level-2-data': path.resolve(__dirname, '../src/index.js')
+      'nexrad-level-2-data': path.resolve(__dirname, '../src/index.js'),
     }
   },
   server: {

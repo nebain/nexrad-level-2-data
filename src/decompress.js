@@ -2,7 +2,10 @@
 
 // bzip
 import bzip from 'seek-bzip';
-// import bzip2 from './bzip2.js';
+import { Buffer } from "buffer";
+if (typeof window !== "undefined") {
+	window.Buffer = Buffer;
+}
 
 // gzip
 import gzipDecompress from './gzipdecompress.js';
