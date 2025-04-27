@@ -2,7 +2,7 @@
 
 // bzip
 import bzip from 'seek-bzip';
-// import BZip2 from "bzip2-wasm";
+// import bzip2 from './bzip2.js';
 
 // gzip
 import gzipDecompress from './gzipdecompress.js';
@@ -62,21 +62,8 @@ const decompress = async (raf) => {
 	const outArrays = [raf.buffer.slice(0, headerSize)];
 
 	// loop through each block and decompress it
-	// const bzip2 = new BZip2();
-	// await bzip2.init();
 
 	let totalLength = headerSize;
-	// for (let i = 0; i < positions.length; i++) {
-	// 	const block = positions[i];
-	// 	// console.log(block);
-	// 	if (block.size > 4294938600) {
-	// 		continue;
-	// 	}
-	// 	const compressed = raf.buffer.slice(block.pos, block.pos + block.size);
-	// 	const decompressed = bzip2.decompress(compressed, block.size * 1000);
-	// 	totalLength += decompressed.length;
-	// 	outArrays.push(decompressed);
-	// }
 
 	positions.forEach((block) => {
 		// extract the block from the buffer
