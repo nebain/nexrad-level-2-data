@@ -27,19 +27,18 @@ class RandomAccessFile {
 		}
 
 		// set up local read functions so we don't constantly query endianess
-		this.readFloatLocal = offset => (new DataView(file.buffer, file.byteOffset + offset, 4)).getFloat32(0, false);
+		const outerView = new DataView(file.buffer);
+		this.readFloatLocal = offset => outerView.getFloat32(offset, false);
 		this.readIntLocal = (offset, byteLength) => {
-			const view = new DataView(file.buffer, file.byteOffset + offset, byteLength);
-			if (byteLength == 1) { return view.getUint8(0); }
-			if (byteLength == 2) { return view.getUint16(0, !this.bigEndian); }
-			if (byteLength == 4) { return view.getUint32(0, !this.bigEndian); }
+			if (byteLength == 1) { return outerView.getUint8(offset); }
+			if (byteLength == 2) { return outerView.getUint16(offset, !this.bigEndian); }
+			if (byteLength == 4) { return outerView.getUint32(offset, !this.bigEndian); }
 			throw new Error("Unsupported byteLength", byteLength);
 		};
 		this.readSignedIntLocal = (offset, byteLength) => {
-			const view = new DataView(file.buffer, file.byteOffset + offset, byteLength);
-			if (byteLength == 1) { return view.getInt8(0); }
-			if (byteLength == 2) { return view.getInt16(0, !this.bigEndian); }
-			if (byteLength == 4) { return view.getInt32(0, !this.bigEndian); }
+			if (byteLength == 1) { return outerView.getInt8(offset); }
+			if (byteLength == 2) { return outerView.getInt16(offset, !this.bigEndian); }
+			if (byteLength == 4) { return outerView.getInt32(offset, !this.bigEndian); }
 			throw new Error("Unsupported byteLength", byteLength);
 		};
 		const decoder = new TextDecoder();
